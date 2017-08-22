@@ -1,11 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page contentType="text/html; charset=EUC-KR" %>
+<%@ page pageEncoding="EUC-KR"%>
+<!DOCTYPE html >
 <html>
+
 <head> 
 <title>상품등록</title>
 
-<link rel="stylesheet" href="/css/admin.css" type="text/css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+	
 
 <script type="text/javascript" src="../javascript/calendar.js"></script>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -76,8 +81,12 @@ function resetData(){
 </script>
 </head>
 
-<body bgcolor="#ffffff" text="#000000">
-
+<body>
+	<!--  toolbar here -->
+	<jsp:include page="/layout/toolbar.jsp" />
+	
+	<div class="container">
+	
 <form name="detailForm"  enctype="multipart/form-data">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
