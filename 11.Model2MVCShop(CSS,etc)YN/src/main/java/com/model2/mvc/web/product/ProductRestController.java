@@ -93,10 +93,11 @@ public class ProductRestController {
 		public List<Product> listProduct(@PathVariable("currentPage") int currentPage) 
 																										throws Exception{
 			System.out.println("/product/json/listProduct : GET");
+			System.out.println("currentPage 받은 값은 : "+currentPage);
 			
 			Search search  = new Search();
 			search.setCurrentPage(currentPage);
-			search.setPageSize(100);
+			search.setPageSize(10);
 			
 			Map<String , Object> map=productService.getProductList(search);
 			List<Product> list = (List)map.get("list");

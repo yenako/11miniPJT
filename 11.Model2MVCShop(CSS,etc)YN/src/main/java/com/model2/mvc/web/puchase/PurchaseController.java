@@ -75,7 +75,6 @@ public class PurchaseController {
 		
 		purchase.setBuyer(userService.getUser(buyerId));
 		int prodNoInt = Integer.parseInt(prodNo);
-		purchase.setDivyDate(purchase.getDivyDate().replaceAll("-",""));
 		purchase.setPurchaseProd(productService.getProduct(prodNoInt));
 		purchase.setTranCode("1");
 		purchaseService.addPurchase(purchase);
@@ -93,7 +92,7 @@ public class PurchaseController {
 		System.out.println("/purchase/getPurchase : GET");
 		
 		Purchase purchase = purchaseService.getPurchase(tranNo);
-		purchase.setDivyDate(CommonUtil.toDateStr(purchase.getDivyDate()));
+		//purchase.setDivyDate(CommonUtil.toDateStr(purchase.getDivyDate()));
 		model.addAttribute("purchase", purchase);
 
 		return "forward:/purchase/readPurchase.jsp";
@@ -127,23 +126,23 @@ public class PurchaseController {
 	}	
 	
 	@RequestMapping( value="updatePurchase", method=RequestMethod.GET )
-	public String updatePurchase(@RequestParam("tranNo") int tranNo,
+	public String updatePurchase(@RequestParam("tranNo") String tranNo,
 																Model model) throws Exception{
 		System.out.println("/purchase/updatePurchase : GET");
 		
-		Purchase purchase=purchaseService.getPurchase(tranNo);
+		Purchase purchase=purchaseService.getPurchase(Integer.parseInt(tranNo));
 		model.addAttribute("purchase", purchase);
 		
 		return "forward:/purchase/updatePurchase.jsp";
 	}
 	
 	@RequestMapping( value="updatePurchase", method=RequestMethod.POST )
-	public String updatePurchase(@RequestParam("tranNo") int tranNo,
+	public String updatePurchase(@RequestParam("tranNo") String tranNo,
 															 @ModelAttribute("purchase") Purchase purchase,
 																Model model) throws Exception{
 		System.out.println("/purchase/updatePurchase : POST");
 		
-		purchase.setTranNo(tranNo);
+		purchase.setTranNo(Integer.parseInt(tranNo));
 		purchaseService.updatePurchase(purchase);
 		
 		model.addAttribute("tranNo", tranNo);

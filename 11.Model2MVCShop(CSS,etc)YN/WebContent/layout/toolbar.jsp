@@ -101,7 +101,7 @@
  
    	<script type="text/javascript">
    	
-   	function history(){
+   	function recentProduct(){
    		popWin = window.open("/history.jsp",
    														"popWin",
    														"left=300, top=200, width=300, height=200, marginwidth=0, marginheight=0, scrollbars=no, scrolling=no, menubar=no, resizable=no");
@@ -155,7 +155,7 @@
 		
 		$( "a:contains('최근 본 상품')" ).on("click" , function() {
 			console.log("최근 본 상품 클릭함");
-			history();
+			recentProduct();
 		}); 
 		
 	 });

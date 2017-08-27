@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=euc-kr" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+ 
 <!--  ///////////////////////// JSTL  ////////////////////////// -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -71,12 +71,12 @@
 				self.location ="/product/listProduct?menu=${param.menu }&sortBy=asc";
 			});
 			
-			$("tr.ct_list_pop:contains('배송하기') span:eq(1)").on("click", function(){   
-				self.location ="/purchase/updateTranCodeByProd?prodNo="+$('input:hidden[name="prodNo2"]', $(this)).val()+"&tranCode=2";
+			$("tr.ct_list_pop:contains('배송하기') ").on("click", function(){ 
+			//$("#deliver").on("click", function(){
+				self.location ="/purchase/updateTranCodeByProd?prodNo="+$(this).find("input[name='prodNo']").val()+"&tranCode=2";
 			});
-			//console.log("input: hidden [0] 은 : _"+$($('input:hidden').eq(0)).val()+"_");
-			//console.log("input: hidden [1] 은 : "+$($('input:hidden').eq(1)).val());
-			
+
+			console.log("input hidden prodNo2 :  "+$("tr.ct_list_pop:contains('배송하기') span:first").find('input').val()  );
 
 			$("tr.ct_list_pop td:nth-child(2)").on("click", function(){
 				if( ${ sessionScope.user.role eq 'admin'} || !$( $(this).find('input')[0]).val() ) {
@@ -100,6 +100,7 @@
 							url : "/product/json/getProdNames" ,
 							method : "GET" ,
 							dataType : "json" ,
+							//async : false,
 							headers : {
 								"Accept" : "application/json",
 								"Content-Type" : "application/json"
@@ -125,6 +126,7 @@
 							url : "/product/json/getProduct/"+prodNo+"/manage" ,
 							method : "GET" ,
 							dataType : "json" ,
+							async : false,
 							headers : {
 								"Accept" : "application/json",
 								"Content-Type" : "application/json"
@@ -150,20 +152,25 @@
 	////////////////////////////////////////////////////////////////////////////////////////////////
 		   var lastScrollTop = 0;
 		    var easeEffect = 'easeInQuint';
-		     
+		    var pageNo = 1
+		    var pageLocker = true;
+		  
+		  //문제 1: after지정하는 위치가 잘못되었다.
+		  //문제 2. page++가 제대로 실행되지 않았다.
+		  
 		    // 1. 스크롤 이벤트 발생
 		    $(window).scroll(function(){ // ① 스크롤 이벤트 최초 발생
 		         
 		        var currentScrollTop = $(window).scrollTop();
-
+					console.log(pageLocker);
 		        if( currentScrollTop - lastScrollTop > 0 ){
-		            if ($(document).height() <= $(window).scrollTop() + $(window).height() + 100) {   
-		            	
-		                var lastbno = $(".ct_list_pop:last").attr("data-bno");
-		                console.log("lastbno : "+lastbno);
-
+		            if ($(document).height() <= $(window).scrollTop() + $(window).height() + 100 && pageLocker) { //+10  
+		            	console.log("page is done.")
+		            	pageLocker = false;
+		                //var pageNo = $("tr.ct_list_pop:last").attr("data-bno");
+						pageNo++;
 		                $.ajax({
-		                	url : "/product/json/listProduct/"+(lastbno)+"",
+		                	url : "/product/json/listProduct/"+pageNo+"",
 							method : "GET" ,
 							dataType : "json" ,
 							headers : {
@@ -172,15 +179,16 @@
 							},
 		                    success : function(data){	      
 		                    	
+		                    	console.log(data);
 		                        var str = "";
 		                        if(data != ""){
 		                        	
 		                            $(data).each(
 		                               function(){
-		                                    console.log(this);     
-		                                    str +=  "<tr class=" + "'listToChange'" + ">"
-		                                        +       "<td class=" +  "'scrolling'" + " align='center' data-bno='" +${resultPage.currentPage} +"'>"
-		                                        +          ${resultPage.currentPage}
+		                                    console.log(pageNo);     
+		                                    str +=  "<tr class='ct_list_pop' align='center' data-bno='"+pageNo+"'>"
+		                                        +       "<td>"
+		                                        +          no
 		                                        +      "</td>"
 		                                        +       "<td align='left'> <a href='#' title='상품 설명 : ${product.prodDetail }'>" + this.prodName + "</a> "
 		                                        +			"<input type='hidden' value='${product.proTranCode}'/>"
@@ -193,49 +201,50 @@
 											if(this.proTranCode==null || this.proTranCode==""){
 												str+= "<span>판매중<input type='hidden' value='${product.prodNo }'/></span>";
 											}else {
-				        						if(${sessionScope.user.role=="admin"}) {	//admin		        							
+				        						if( ${sessionScope.user.role=="admin"} ) {	//admin		        							
 					        							if(this.proTranCode=="1  "){
 			                            						str+="구매완료 &nbsp; "
 			                            							+						"<span>배송하기  </apan>"
+			                            						
 			        				                				+						"<input type='hidden' id='prodNo2' name ='prodNo2' value='${product.prodNo }'/>";
 		                      					      }else if(this.proTranCode=="2  "){
 		                      					    		str+="배송중";
 		                      					      }else{
 		                      					    		str+="배송완료";
-		                      					      }//end of else
-		                      					    	  
+		                      					      }//end of else  
 												}else{//user or empty
 													str+= "재고없음";
 												}	
 				        					}//end if (product.proTranCode is not empty)
-				        					str+= "</td></tr></tr>";
+				        					str+= "</td></tr></tr><tr id='endIndex'></tr>";
+				        					no++;
 				        				//}//end of function    				
 
-		                            });// each
-		                          
-		                            $(".ct_list_pop:last").after(str);
-		                                 
+		                             });// each
+		                            $("#endIndex:last").after(str);
+		                            pageLocker = true;
 		                        }// if : data!=null
 		                        else{ 
 		                            alert("더 불러올 데이터가 없습니다.");
 		                        }// else
 		         
 		                    }// success
+				
 		                });// end of ajax
 		                 
 		                // 여기서 class가 listToChange인 것중 가장 처음인 것을 찾아서 그 위치로 이동하자.
-		                var position = $(".listToChange:first").offset();// 위치 값
-		                 
+		                //var position = $(".listToChange:last").offset();// 위치 값//changed it from first to last.
+		                var position = $(".listToChange:first").offset();
 		                // 이동:  위로 부터 position.top px 위치로 스크롤 하는 것이다. 그걸 500ms 동안 애니메이션이 이루어짐.
 		                $('html,body').stop().animate({scrollTop : position.top }, 600, easeEffect); 
-		     
+		     			
 		            }//if
 		             console.log("if문 밖");
 		            lastScrollTop = currentScrollTop;
 		        }else{
 		     
 		        }// else : 업 스크롤인 상태
-		         
+		       
 		});// scroll event
 
 	</script>
@@ -298,14 +307,14 @@
       
         <thead>
           <tr>
-            <th align="center">No</th>
-            <th align="left" >상품명</th>
-            <th align="left">가격&nbsp; <!-- td class="ct_list_b"  -->
+            <th style="text-align:center">No</th>
+            <th style="text-align:center">상품명</th>
+            <th style="text-align:center">가격&nbsp; <!-- td class="ct_list_b"  -->
 						<span>▼</span>
 						<span>▲</span>
 			</th>
-            <th align="left">등록일</th>
-            <th align="left">현재상태</th>
+            <th style="text-align:center">등록일</th>
+            <th style="text-align:center">현재상태</th>
           </tr>
         </thead>
         
@@ -316,7 +325,7 @@
 		  <c:forEach var="product" items="${list}">
 		  
 			<c:set var="i" value="${ i+1 }" />
-			<tr class="ct_list_pop" data-bno="${resultPage.currentPage}">
+			<tr class="ct_list_pop" data-bno="2">
 			  <td align="center">${ i }</td>
 			  <td align="left">	<a href="#" title="상품 설명 : ${product.prodDetail }">${product.prodName}</a> 
 					  	<input type="hidden" value="${product.proTranCode}"/>
@@ -324,13 +333,10 @@
 			 </td>
 			  <td align="right">${product.priceAmount}원 &nbsp;&nbsp;</td>
 			  <td align="center">${product.manuDate}</td>
-			 <%-- <td align="center" >	
-			  	<i class="glyphicon glyphicon-ok" id= "${user.userId}"></i>
-			  	<input type="hidden" value="${user.userId}">
-			  </td> --%>
+			  
 			<td align="center" >	
 					<c:if test="${empty product.proTranCode}">
-							<span>판매중<input type="hidden" value="${product.prodNo }"/></span>
+							<span>판매중<input type="hidden" value="${product.prodNo}"/></span>
 					</c:if>
 					<c:if test="${!empty product.proTranCode}">
 					
@@ -338,9 +344,9 @@
 							<c:choose >
 								<c:when test="${product.proTranCode=='1  ' }">
 									구매완료 &nbsp; 
-									 <span>배송하기  </apan>
-									 
-									<input type="hidden" id="prodNo2" name ="prodNo2" value="${product.prodNo }"/>
+									 <span id="deliver">배송하기
+									 	<input type="hidden" id="prodNo" name ="prodNo" value="${product.prodNo}"/>
+									 </span>
 								</c:when>
 								<c:when test="${product.proTranCode=='2  ' }">
 									배송중 
@@ -355,10 +361,16 @@
 							재고없음
 						</c:if>	
 					</c:if>
-			</td>	
+			</td>
+			<td><span id="image"></span>	</td>
 			</tr>
+			
+<!-- 			<tr >
+				<td><span id="image"></span></td>
+			</tr> 
+-->
           </c:forEach>
-        
+        <tr id="endIndex"></tr>
         </tbody>
       
       </table>

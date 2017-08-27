@@ -71,8 +71,8 @@ public class ProductController {
 	ModelAndView modelAndView = new ModelAndView();
 
 	 try {
-		// String uploadDir = "C:\\bitcamp\\mini-PJT\\";
-		 String uploadDir = "C:\\Users\\koh\\git\\10miniPJT\\10.Model2MVCShop(Ajax)YN\\WebContent\\images\\uploadFiles\\";
+
+		 String uploadDir = "C:\\Users\\koh\\git\\11miniPJT\\11.Model2MVCShop(CSS,etc)YN\\WebContent\\images\\uploadFiles\\";
 		 //String realPath = request.getServletContext().getRealPath(uploadDir);
 		
 		 File transferFile = new File(uploadDir  + file.getOriginalFilename()); 
@@ -90,79 +90,6 @@ public class ProductController {
 			 e.printStackTrace();
 		 	}
 
-//		if(FileUpload.isMultipartContent(request)) {
-//			String tempDir =
-//			"C:\\bitcamp\\mini-PJT\\";
-//			
-//			DiskFileUpload fileUpload = new DiskFileUpload();
-//			fileUpload.setRepositoryPath(tempDir);
-//			fileUpload.setSizeMax(1024*1024*10);
-//			fileUpload.setSizeThreshold(1024*100);
-//			
-//			if(request.getContentLength() < fileUpload.getSizeMax()) {
-//				StringTokenizer token = null;
-//				
-//				List<FileItem> fileItemList = fileUpload.parseRequest(request);
-//				System.out.println(fileItemList);
-//				for(FileItem fileItem : fileItemList ){
-//					System.out.println( "fileItem : "+ fileItem);
-//				}
-//				int Size = fileItemList.size();
-//				System.out.println("Size : "+Size);
-//				for (int i = 0; i < Size ; i++) {
-//					System.out.println("check12");
-//					FileItem fileItem = (FileItem) fileItemList.get(i);
-//					if (fileItem.isFormField()) { //파일이 text형태인지 아닌지 check.
-//						if(fileItem.getFieldName().equals("manuDate")) {
-//							token = new StringTokenizer(fileItem.getString("euc-kr"),"-");
-//							String manuDate = token.nextToken() + token.nextToken() + token.nextToken();
-//							product.setManuDate(manuDate);
-//							}
-//						else if(fileItem.getFieldName().equals("prodNo"))
-//							product.setProdNo(Integer.parseInt(fileItem.getString("euc-kr")));
-//						else if(fileItem.getFieldName().equals("prodName"))
-//							product.setProdName(fileItem.getString("euc-kr"));
-//						else if(fileItem.getFieldName().equals("prodDetail"))
-//							product.setProdDetail(fileItem.getString("euc-kr"));
-//						else if(fileItem.getFieldName().equals("price"))
-//							product.setPrice(Integer.parseInt(fileItem.getString("euc-kr")));
-//				}else {
-//					
-//					if (fileItem.getSize() > 0) {
-//						int idx = fileItem.getName().lastIndexOf("\\");
-//						if (idx == -1) {
-//							idx = fileItem.getName().lastIndexOf("/");
-//						}
-//						String fileName = fileItem.getName().substring(idx+1);
-//						product.setFileName(fileName);					
-//						try {
-//							File uploadFile = new File(tempDir,fileName);
-//							fileItem.write(uploadFile);
-//						} catch (IOException e) {
-//							System.out.println(e);
-//						}
-//					}
-//					else {
-//						product.setFileName("../../images/empty.GIF");
-//					}
-//				} //else
-//			} //for
-//			
-//		productService.addProduct(product);
-//		
-//		modelAndView.addObject("product", product);
-//		
-//		} else {
-//			System.out.println("check2");
-//			int overSize = (request.getContentLength()  / 1000000);
-//			System.out.println("<script>alert('파일이 크기는 1MB까지 입니다. 올리신 파일 용량은"
-//					+ overSize + "MB입니다.");
-//			System.out.println("history.back(); </script>");
-//		}
-//	}	
-//	else {
-//		System.out.println("인코딩 타입이 multipart/form-data 가 아닙니다. ");
-//	}
 	 modelAndView.addObject("product", product);
 	modelAndView.setViewName("/product/checkProduct.jsp");
 
@@ -225,24 +152,31 @@ public class ProductController {
 	}
 	
 	@RequestMapping(value="updateProduct", method=RequestMethod.POST)
-	public ModelAndView updateProduct(@ModelAttribute("product") Product product,
-																Model model) throws Exception{
+	public ModelAndView updateProduct(
+																@RequestParam("file") MultipartFile file,
+																@ModelAttribute("product") Product product) throws Exception{
 		System.out.println("/product/updateProduct : POST");
-		System.out.println("product fileName is ...  : "+"_"+product.getFileName()+"_" );
 		
-		if(product.getFileName().length()<1){
-			product.setFileName(null);
-			System.out.println("product.getFileName().length()<1 이다.");
-		}
+		 String uploadDir = "C:\\Users\\koh\\git\\11miniPJT\\11.Model2MVCShop(CSS,etc)YN\\WebContent\\images\\uploadFiles\\";
+		 //String realPath = request.getServletContext().getRealPath(uploadDir);
 		
-		System.out.println("product fileName is ...  : "+"_"+product.getFileName()+"_" );
+		 File transferFile = new File(uploadDir  + file.getOriginalFilename()); 
+		 file.transferTo(transferFile);
+		 System.out.println("file transferred.... ");
+		 
+/*			if(product.getFileName().length()<1){
+				product.setFileName(null);
+				System.out.println("product.getFileName().length()<1 이다.");
+			}else{
+				product.setFileName(file.getOriginalFilename());
+			}*/
+		 product.setFileName(file.getOriginalFilename());	
 		product.setManuDate(product.getManuDate().replaceAll("-",""));
 		productService.updateProduct(product);
 		
-		model.addAttribute("product", productService.getProduct(product.getProdNo()));
-		model.addAttribute("prodNo",product.getProdNo() );
-		
 		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject( "product", productService.getProduct(product.getProdNo()) );
+		modelAndView.addObject("prodNo", product.getProdNo());
 		modelAndView.setViewName("/product/getProduct.jsp");
 		return modelAndView;
 

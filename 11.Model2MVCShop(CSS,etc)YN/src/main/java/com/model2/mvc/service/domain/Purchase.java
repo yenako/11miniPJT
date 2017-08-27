@@ -10,7 +10,7 @@ public class Purchase {
 	
 	private User buyer;
 	private String divyAddr;
-	private String divyDate;
+	private Date divyDate;
 	private String divyRequest;
 	private Date orderDate; ////>>>><<<<<< update 할때 이거 어떻게 받아옴??
 	private String paymentOption;
@@ -35,10 +35,10 @@ public class Purchase {
 	public void setDivyAddr(String divyAddr) {
 		this.divyAddr = divyAddr;
 	}
-	public String getDivyDate() {
+	public Date getDivyDate() {
 		return divyDate;
 	}
-	public void setDivyDate(String divyDate) {
+	public void setDivyDate(Date divyDate) {
 		this.divyDate = divyDate;
 	}
 	public String getDivyRequest() {

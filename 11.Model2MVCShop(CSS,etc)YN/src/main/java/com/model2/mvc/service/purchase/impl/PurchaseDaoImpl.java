@@ -41,7 +41,9 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	}
 
 	public Purchase getPurchase2(int prodNo) throws Exception {
-		return sqlSession.selectOne("PurchaseMapper.getPurchase2", prodNo);
+		Purchase purchase1 = new Purchase();
+		purchase1 = sqlSession.selectOne("PurchaseMapper.getPurchase2", prodNo);
+		return purchase1;
 	}
 
 	public  List<Purchase>  getPurchaseList(Map<String, Object> map) throws Exception {

@@ -62,7 +62,7 @@
   			<if test="receiverPhone !=null">  receiver_phone		=#{receiverPhone},		</if> 
   			<if test="divyAddr !=null">			 demailaddr				=#{divyAddr},			   	</if> 
   			<if test="divyRequest != null">	 dlvy_request			=#{divyRequest}, 		 </if> 					
-  			<if test="divyDate != null"> 			 dlvy_date					=#{divyDate} 				 </if>
+  			<if test="divyDate != null"> 			 dlvy_date					=#{divyDate}, 				 </if>
   			<if test="tranCode != null"> 			 tran_status_code	=#{tranCode} 				 </if> 	 	
   		</set>
 		WHERE tran_no = #{tranNo}  		

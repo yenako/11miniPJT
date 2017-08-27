@@ -12,9 +12,7 @@
 <script type="text/javascript">
 
 function getSold(){
-	
 	$("form").attr("method" , "POST").attr("action" , "/purchase/updatePurchase?tranNo=${purchase.tranNo }").submit();
-
 }
 
 
