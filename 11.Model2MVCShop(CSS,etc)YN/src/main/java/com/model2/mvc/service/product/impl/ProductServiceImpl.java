@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.model2.mvc.common.Search;
 import com.model2.mvc.common.CommonUtil;
+import com.model2.mvc.service.domain.Comment;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.product.ProductDao;
 import com.model2.mvc.service.product.ProductService;
@@ -32,6 +33,10 @@ public class ProductServiceImpl implements ProductService {
 		System.out.println(this.getClass());
 	}
 	
+	
+	public int addComment(Comment comment) throws Exception{
+		return productDao.addComment(comment);
+	}
 	
 	public int addProduct(Product product) throws Exception {
 		return productDao.addProduct(product);
@@ -66,6 +71,10 @@ public class ProductServiceImpl implements ProductService {
 
 	public int updateProduct(Product product) throws Exception {
 		return productDao.updateProduct(product);
+	}
+	
+	public List<Comment> getCommentList(int prodNo) throws Exception{
+		return productDao.getCommentList(prodNo);
 	}
 
 }//end of the class

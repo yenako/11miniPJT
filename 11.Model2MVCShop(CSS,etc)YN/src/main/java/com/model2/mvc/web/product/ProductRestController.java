@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Comment;
 import com.model2.mvc.service.domain.Product;
+import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.product.ProductService;
 
 @RestController
@@ -37,6 +41,31 @@ public class ProductRestController {
 		public ProductRestController() {
 			System.out.println(this.getClass());
 		}
+		
+
+		
+		@RequestMapping(value="json/addComment", method=RequestMethod.POST)
+		public int addComment(@RequestBody Comment comment,
+													HttpSession session) throws Exception{
+			System.out.println("여기는 json/addcomment입니다.");
+			User user = (User) session.getAttribute("user");
+			comment.setCustomerId(user.getUserId());
+			comment.setCustomerName(user.getUserName());
+			
+			return productService.addComment(comment);
+		}
+		
+		@RequestMapping(value = "json/getCommentList/{prodNo}", method=RequestMethod.GET)
+		public List<Comment> getCommentList(@PathVariable("prodNo") int prodNo) 
+																										throws Exception{
+			System.out.println("/product/json/getCommentList : GET");
+			System.out.println("prodNo 받은 값은 : "+prodNo);
+			
+			List<Comment> list=productService.getCommentList(prodNo);
+
+			return list;
+		}
+		
 		
 		@RequestMapping(value = "json/addProduct", method=RequestMethod.POST)
 		public int  addProduct(@RequestParam("imageFile") MultipartFile file,
@@ -89,13 +118,15 @@ public class ProductRestController {
 			return listProdName;
 		}
 		
-		@RequestMapping(value = "json/listProduct/{currentPage}", method=RequestMethod.GET)
-		public List<Product> listProduct(@PathVariable("currentPage") int currentPage) 
+		@RequestMapping(value = "json/listProduct/{currentPage}/{sortBy}", method=RequestMethod.GET)
+		public List<Product> listProduct(@PathVariable("currentPage") int currentPage,
+																		@PathVariable("sortBy") String sortBy) 
 																										throws Exception{
 			System.out.println("/product/json/listProduct : GET");
 			System.out.println("currentPage 받은 값은 : "+currentPage);
 			
 			Search search  = new Search();
+			search.setSortBy(sortBy);
 			search.setCurrentPage(currentPage);
 			search.setPageSize(10);
 			

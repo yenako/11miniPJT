@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+
+<mapper namespace="CommentMapper">
+	
+<!-- Purpose of resultMap is mapping resultSet of SQL -->
+
+  	<resultMap id ="commentSelectMap" type="comment">
+   		<result property="commentNo" 	 	column="comment_no" 		jdbcType="NUMERIC"/>
+  		<result property="regDate" 				column="reg_date" 				jdbcType="DATE"/>
+  		<result property="customerId" 			column="customer_id" 		jdbcType="VARCHAR"/>
+  		<result property="customerName"	column="customer_name"	jdbcType="VARCHAR"/>
+  		<result property="text" 						column="text"							jdbcType="VARCHAR"/>
+  		<result property="prodNo" 					column="prod_no"					jdbcType="NUMERIC"/>
+  	</resultMap>	
+  
+	<insert id="addComment" parameterType="comment">
+		INSERT 
+		INTO comments (comment_no, reg_date, customer_id, customer_name, text, prod_no) 
+		VALUES(		seq_comment_com_no.nextval,   
+							sysdate,
+							#{customerId,jdbcType=VARCHAR}, 
+							#{customerName,jdbcType=VARCHAR}, 
+							#{text,jdbcType=VARCHAR},
+							#{prodNo,jdbcType=NUMERIC} )
+	</insert>
+	
+  	<select id="getCommentList" parameterType="java.lang.Integer" resultMap="commentSelectMap">
+	SELECT   comment_no, to_char(reg_date, 'YYYY-MM-DD HH:MI:SS') as reg_date, customer_id, customer_name, text, prod_no 
+	FROM		 comments
+	<where> 
+		prod_no = #{value} 
+	</where>												 
+	ORDER BY reg_date desc		 		 
+  	</select>
+  	
+
+<!--    	<select id = "getComment" parameterType="string" resultMap="commentSelectMap">
+   	SELECT *
+  		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+  						SELECT comment_no, to_char(reg_date, 'YYYY-MM-DD HH:MI:SS') as reg_date, customer_id, customer_name, text, prod_no
+  		FROM comments
+  		<where> 
+			prod_no = #{value} 
+		</where>
+				
+  	</select> -->
+  	  	
+  <!-- 	<update id="updateComment" parameterType="comment" >
+  		UPDATE product
+  		<set>
+    		<if test="prodName !=null">prod_name			  						=#{prodName,jdbcType=VARCHAR},</if>
+  			<if test="prodDetail !=null">prod_detail			 						 =#{prodDetail,jdbcType=VARCHAR},</if>
+  			<if test="manuDate !=null"> manufacture_day						=#{manuDate,jdbcType=VARCHAR},</if> 
+  			<if test="price !=null">			price												=#{price,jdbcType=NUMERIC},		</if> 
+  			<if test="fileName != null"> image_file		=#{fileName,jdbcType=VARCHAR} </if> 					
+  		</set>
+		WHERE prod_no = #{prodNo}  		
+  	</update>
+  	
+  	<delete id="removeProduct" parameterType="java.lang.String">
+  		DELETE
+  	 	FROM product
+  	 	WHERE prod_no = #{value}
+  	</delete> -->
+  	  
+  	
+</mapper>

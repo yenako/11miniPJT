@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=euc-kr" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
  
 <!--  ///////////////////////// JSTL  ////////////////////////// -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -63,15 +62,32 @@
 			
 			$("th:contains('가격') span:first").on("click", function(){
 				console.log($('input:hidden').val());
+				sorting = desc;
 				self.location ="/product/listProduct?menu=${param.menu }&sortBy=desc"
 			});
 			
 			$("th:contains('가격') span:last").on("click", function(){
-				//console.log(${param.menu })
+				sorting = asc;
 				self.location ="/product/listProduct?menu=${param.menu }&sortBy=asc";
 			});
 			
-			$("tr.ct_list_pop:contains('배송하기') ").on("click", function(){ 
+			/* $("tr.ct_list_pop:contains('배송하기') ").on("click", function(){ 
+			//$("#deliver").on("click", function(){
+				self.location ="/purchase/updateTranCodeByProd?prodNo="+$(this).find("input[name='prodNo']").val()+"&tranCode=2";
+			});
+
+			console.log("input hidden prodNo2 :  "+$("tr.ct_list_pop:contains('배송하기') span:first").find('input').val()  );
+
+			$("tr.ct_list_pop td:nth-child(2)").on("click", function(){
+				if( ${ sessionScope.user.role eq 'admin'} || !$( $(this).find('input')[0]).val() ) {
+					self.location ="/product/getProduct?prodNo="+$( $(this).find('input')[1]).val() +"&menu=${param.menu}"
+					}
+			}); */
+	});
+		
+	$(document).ajaxComplete(function(){
+	    // fire when any Ajax requests complete
+		$("tr.ct_list_pop:contains('배송하기') ").on("click", function(){ 
 			//$("#deliver").on("click", function(){
 				self.location ="/purchase/updateTranCodeByProd?prodNo="+$(this).find("input[name='prodNo']").val()+"&tranCode=2";
 			});
@@ -83,41 +99,8 @@
 					self.location ="/product/getProduct?prodNo="+$( $(this).find('input')[1]).val() +"&menu=${param.menu}"
 					}
 			});
-	});
-		
-	
-		$( function(){		
-			$( document ).tooltip();
-		});	
-		
-
-	
-	$( function() {
-		$( "#searchKeyword" ).on('keyup', function(){
-					
-					$.ajax(
-							{
-							url : "/product/json/getProdNames" ,
-							method : "GET" ,
-							dataType : "json" ,
-							//async : false,
-							headers : {
-								"Accept" : "application/json",
-								"Content-Type" : "application/json"
-							},
-							success : function(JSONData , status) {
-								
-									$(  "#searchKeyword"  ).autocomplete({	
-										source:  JSONData
-									});
-							}
-					  });//end of ajax
-			});
-	 });	
-	
-	
-		$( function(){
-			$( "tr.ct_list_pop:contains('판매중') span" ).on("click" , function() {
+			
+			$( "tr.ct_list_pop:contains('판매중') span" ).on("click" , function() {	
 				alert("판매중을 클릭했습니다.");
 				var prodNo = $( $(this).find('input')).val();
 				console.log(prodNo);
@@ -148,102 +131,154 @@
 							}
 					});
 			});
-		});
-	////////////////////////////////////////////////////////////////////////////////////////////////
-		   var lastScrollTop = 0;
-		    var easeEffect = 'easeInQuint';
-		    var pageNo = 1
-		    var pageLocker = true;
-		  
-		  //문제 1: after지정하는 위치가 잘못되었다.
-		  //문제 2. page++가 제대로 실행되지 않았다.
-		  
-		    // 1. 스크롤 이벤트 발생
-		    $(window).scroll(function(){ // ① 스크롤 이벤트 최초 발생
-		         
-		        var currentScrollTop = $(window).scrollTop();
-					console.log(pageLocker);
-		        if( currentScrollTop - lastScrollTop > 0 ){
-		            if ($(document).height() <= $(window).scrollTop() + $(window).height() + 100 && pageLocker) { //+10  
-		            	console.log("page is done.")
-		            	pageLocker = false;
-		                //var pageNo = $("tr.ct_list_pop:last").attr("data-bno");
-						pageNo++;
-		                $.ajax({
-		                	url : "/product/json/listProduct/"+pageNo+"",
+	});
+			
+		$( function(){		
+			$( document ).tooltip();
+	   	});	 
+		
+
+	
+	$( function() {
+		$( "#searchKeyword" ).on('keyup', function(){
+					
+					$.ajax(
+							{
+							url : "/product/json/getProdNames" ,
 							method : "GET" ,
 							dataType : "json" ,
 							headers : {
 								"Accept" : "application/json",
 								"Content-Type" : "application/json"
 							},
-		                    success : function(data){	      
-		                    	
-		                    	console.log(data);
+							success : function(JSONData , status) {
+								
+									$(  "#searchKeyword"  ).autocomplete({	
+										source:  JSONData
+									});
+							}
+					  });//end of ajax
+			});
+	 });	
+	
+	
+		/* $( function(){
+			
+			$( "tr.ct_list_pop:contains('판매중') span" ).on("click" , function() {	
+				alert("판매중을 클릭했습니다.");
+				var prodNo = $( $(this).find('input')).val();
+				console.log(prodNo);
+				$.ajax(
+						{
+							url : "/product/json/getProduct/"+prodNo+"/manage" ,
+							method : "GET" ,
+							dataType : "json" ,
+							async : false,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+							success : function(JSONData , status) {
+								
+								alert(prodNo);
+								//Debug...
+								alert(status);
+								//Debug...
+								alert("JSONData string : \n"+JSON.stringify(JSONData));
+								//console.log("fileName : "+JSONData.fileName);
+								var displayValue = "<img src =/images/uploadFiles/"
+																+JSONData.fileName+"/>";
+								//Debug...									
+								//alert(displayValue);
+								$("img").remove();
+								$( "#image").html(displayValue);
+							}
+					});
+			});
+		}); */
+	////////////////////////////////////////////////////////////////////////////////////////////////
+		  
+		  	var lastScrollTop = 0;
+			var pageNo = 2;
+			var no = 10;
+		  	var scrollLocker = true;
+		  	var sorting = null;
+		    // 1. 스크롤 이벤트 발생
+		    $(window).scroll(function(){ // ① 스크롤 이벤트 최초 발생
+		         
+		        var currentScrollTop = $(window).scrollTop();
+				
+		        if( currentScrollTop - lastScrollTop > 0 ){
+		            if ($(document).height() <= $(window).scrollTop() + $(window).height() + 10 && scrollLocker) { //+10  
+		           		
+		            	scrollLocker = false;
+		            	//self.location ="/product/listProduct?menu=${param.menu }&sortBy=desc"
+		                $.ajax({
+		                	url : "/product/json/listProduct/"+pageNo+"/"+sorting+"/",
+							method : "GET" ,
+							dataType : "json" ,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+		                    success : function(data){
 		                        var str = "";
 		                        if(data != ""){
 		                        	
 		                            $(data).each(
-		                               function(){
-		                                    console.log(pageNo);     
-		                                    str +=  "<tr class='ct_list_pop' align='center' data-bno='"+pageNo+"'>"
-		                                        +       "<td>"
-		                                        +          no
-		                                        +      "</td>"
-		                                        +       "<td align='left'> <a href='#' title='상품 설명 : ${product.prodDetail }'>" + this.prodName + "</a> "
-		                                        +			"<input type='hidden' value='${product.proTranCode}'/>"
-                    							+			"<input type='hidden' value='${product.prodNo}''/>"
-		                                        +		"</td>"      
-		                                        +       "<td align='right'>" + this.priceAmount + "원 &nbsp;&nbsp;</td>"
-		                                        +       "<td align='center'>" + this.manuDate + "</td>"
-		                                        +		"<td align='center' >"	;
+		                            		
+		                               function(){		                            	
+		                            	   no++;
+		                            	   str +=  "<tr class='ct_list_pop' align='center' data-bno='"+pageNo+"'>"
+	                                        +       "<td>"+no+ "</td>"
+	                                        +       "<td align='left'> <a href='#' title='상품 설명 :"+this.prodDetail+"'>" + this.prodName + "</a> "
+	                                        +			"<input type='hidden' value='"+this.proTranCode+"'/>"
+               								+			"<input type='hidden' value='"+this.prodNo+"'/>"
+	                                        +		"</td>"      			
 
-											if(this.proTranCode==null || this.proTranCode==""){
-												str+= "<span>판매중<input type='hidden' value='${product.prodNo }'/></span>";
-											}else {
-				        						if( ${sessionScope.user.role=="admin"} ) {	//admin		        							
-					        							if(this.proTranCode=="1  "){
-			                            						str+="구매완료 &nbsp; "
-			                            							+						"<span>배송하기  </apan>"
-			                            						
-			        				                				+						"<input type='hidden' id='prodNo2' name ='prodNo2' value='${product.prodNo }'/>";
-		                      					      }else if(this.proTranCode=="2  "){
-		                      					    		str+="배송중";
-		                      					      }else{
-		                      					    		str+="배송완료";
-		                      					      }//end of else  
-												}else{//user or empty
-													str+= "재고없음";
-												}	
-				        					}//end if (product.proTranCode is not empty)
-				        					str+= "</td></tr></tr><tr id='endIndex'></tr>";
-				        					no++;
-				        				//}//end of function    				
+	                                        +       "<td align='right'>" + this.priceAmount + "원 &nbsp;&nbsp;</td>"
+	                                        +       "<td align='center'>" + this.manuDate + "</td>"
+	                                        +		"<td align='center' >"	;
 
-		                             });// each
-		                            $("#endIndex:last").after(str);
-		                            pageLocker = true;
+										if(this.proTranCode==null || this.proTranCode==""){
+											str+= "<span>판매중<input type='hidden' value='"+this.prodNo+"'/></span>";
+										}else {
+			        						if( ${sessionScope.user.role=="admin"} ) {	//admin		        							
+				        							if(this.proTranCode=="1  "){
+		                            						str+="구매완료 &nbsp; "
+		                            							+						"<span id=deliver>배송하기</apan>"
+		        				                				+						"<input type='hidden' id='prodNo' name ='prodNo' value='"+this.prodNo+"'/>";
+	                      					      }else if(this.proTranCode=="2  "){
+	                      	 				    		str+="배송중";
+	                      					      }else{
+	                      					    		str+="배송완료";
+	                      					      }//end of else  
+											}else{//user or empty
+												str+= "재고없음";
+											}	
+			        					}//end if (product.proTranCode is not empty)
+			        					str+= "</td></tr></tr><tr class='endIndex'></tr>";
+		                                    
+				        				}//end of function    				
+
+		                             );// each
+		                            $(".endIndex:last").after(str);
+		                              
 		                        }// if : data!=null
 		                        else{ 
 		                            alert("더 불러올 데이터가 없습니다.");
 		                        }// else
-		         
+		                        	pageNo++;
+		    		            scrollLocker = true;
+		                        
 		                    }// success
 				
-		                });// end of ajax
-		                 
-		                // 여기서 class가 listToChange인 것중 가장 처음인 것을 찾아서 그 위치로 이동하자.
-		                //var position = $(".listToChange:last").offset();// 위치 값//changed it from first to last.
-		                var position = $(".listToChange:first").offset();
-		                // 이동:  위로 부터 position.top px 위치로 스크롤 하는 것이다. 그걸 500ms 동안 애니메이션이 이루어짐.
-		                $('html,body').stop().animate({scrollTop : position.top }, 600, easeEffect); 
-		     			
-		            }//if
-		             console.log("if문 밖");
+		                });// end of ajax		    
+		               
+		             }//if		            
+		            
 		            lastScrollTop = currentScrollTop;
-		        }else{
-		     
-		        }// else : 업 스크롤인 상태
+		        }
 		       
 		});// scroll event
 
@@ -310,7 +345,7 @@
             <th style="text-align:center">No</th>
             <th style="text-align:center">상품명</th>
             <th style="text-align:center">가격&nbsp; <!-- td class="ct_list_b"  -->
-						<span>▼</span>
+						<span>▼<input  type="hidden" name=""></span>
 						<span>▲</span>
 			</th>
             <th style="text-align:center">등록일</th>
@@ -370,7 +405,7 @@
 			</tr> 
 -->
           </c:forEach>
-        <tr id="endIndex"></tr>
+        <tr class="endIndex"></tr>
         </tbody>
       
       </table>

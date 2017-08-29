@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Comment;
 import com.model2.mvc.service.domain.Product;
+import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.product.ProductService;
 
 @Controller
@@ -123,16 +127,21 @@ public class ProductController {
 					    response.addCookie(cookie);
 					}
 				}
-		}
+		}//end of setting Cookie
+		
+		List<Comment> commentList = productService.getCommentList(prodNo);
+		///////////////////////////////////////////////////////
 		
 		Product product = productService.getProduct( prodNo );
 		
 		ModelAndView modelAndView = new ModelAndView();
 		if(menu.equals("manage")){
 			model.addAttribute("prodNo", prodNo);
+			modelAndView.addObject("commentList", commentList);
 			modelAndView.setViewName("/product/updateProduct");
 		}else{
 			model.addAttribute("product", product);
+			modelAndView.addObject("commentList", commentList);
 			modelAndView.setViewName("/product/readProduct.jsp");
 		}
 	
@@ -194,7 +203,6 @@ public class ProductController {
 		search.setPageSize(pageSize);
 		
 		Map<String , Object> map=productService.getProductList(search);
-		
 		
 		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
 		System.out.println(resultPage);

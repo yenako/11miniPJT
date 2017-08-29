@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Comment;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.product.ProductDao;
 
@@ -29,6 +30,10 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	///Method
+	public int addComment(Comment comment) throws Exception{
+		return sqlSession.insert("CommentMapper.addComment", comment);
+	}
+	
 	public int addProduct(Product product) throws Exception {
 		return sqlSession.insert("ProductMapper.addProduct", product);
 	}
@@ -47,6 +52,11 @@ public class ProductDaoImpl implements ProductDao {
 
 	public int getTotalCount(Search search) throws Exception {
 		return sqlSession.selectOne("ProductMapper.getTotalCount", search);
+	}
+	
+	public List<Comment> getCommentList(int prodNo) throws Exception{
+		System.out.println("prodDaoImpl  prodNo: "+prodNo);
+		return sqlSession.selectList("CommentMapper.getCommentList", prodNo);
 	}
 
 }

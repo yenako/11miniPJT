@@ -57,6 +57,7 @@
   	</delete>
   	
 
+  	
   	<select id="getProductList" parameterType="com.model2.mvc.common.Search" resultMap="productSelectMap">
 SELECT *
   		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
