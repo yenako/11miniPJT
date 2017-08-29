@@ -125,7 +125,7 @@ public class ProductRestController {
 		@RequestMapping(value = "json/updateProduct/{prodNo}", method=RequestMethod.GET)
 		public Product updateProduct(@PathVariable int prodNo) throws Exception{
 			System.out.println("/product/json/updateProduct : GET");
-			//Business Logic
+		 	//Business Logic
 			return productService.getProduct(prodNo);
 		}
 		
