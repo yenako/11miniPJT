@@ -119,7 +119,8 @@ public class ProductController {
 						System.out.println("newCookieÀÇ °ªÀº "+newCookie);
 						cookie.setValue(newCookie);
 						cookie.setPath("/");
-					    response.addCookie(cookie);
+					    
+						response.addCookie(cookie);
 					}
 					else{
 						cookie = new Cookie("history", prodNo+"");

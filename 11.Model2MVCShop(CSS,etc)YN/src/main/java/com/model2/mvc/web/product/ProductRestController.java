@@ -118,15 +118,15 @@ public class ProductRestController {
 			return listProdName;
 		}
 		
-		@RequestMapping(value = "json/listProduct/{currentPage}/{sortBy}", method=RequestMethod.GET)
-		public List<Product> listProduct(@PathVariable("currentPage") int currentPage,
-																		@PathVariable("sortBy") String sortBy) 
+		@RequestMapping(value = "json/listProduct/{currentPage}", method=RequestMethod.GET)
+		public List<Product> listProduct(@PathVariable("currentPage") int currentPage
+																		) 
 																										throws Exception{
 			System.out.println("/product/json/listProduct : GET");
 			System.out.println("currentPage 받은 값은 : "+currentPage);
 			
 			Search search  = new Search();
-			search.setSortBy(sortBy);
+			
 			search.setCurrentPage(currentPage);
 			search.setPageSize(10);
 			

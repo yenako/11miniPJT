@@ -8,6 +8,13 @@
 	
 <head>
 	<meta charset="EUC-KR">
+	<!-- 예나 added -->
+	<link rel="stylesheet" href="/css/comment.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/comment.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/icon.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/icon.min.css" rel="stylesheet">
+	
+	<!--  예나 Added end-->
 	
 	<!--  not sure to leave it -->
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -187,34 +194,84 @@
 	<br/>
 </div>
 
-		<!-- NEW comment part here -->
-	<form name="detailForm" >
-		<div class="form-group">
-	    	<label for="textm" class="col-sm-offset-1 col-sm-3 control-label">댓글달기</label>
-    		<span class="col-sm-4">
-      			<input type="text" class="form-control" id="textm" name="text" placeholder="여기에 댓글을 입력해주세요">
-      			<input type="hidden" name="prodNo" value="${product.prodNo}">
-    		</span>
-   			 <button type="button" id="addComment" class="btn btn-primary"  >[댓글등록]</button>
-	 	 </div>
-	</form>
-	  
-	<c:if test="${commentList != null}">
-	 <table class="table table-hover table-striped" id="comList" >
-			<tbody>
-				<c:forEach var="comment" items="${commentList}">
-					<tr>
-						<td>
-						${comment.customerId}&nbsp; ${comment.regDate}
-						</td>
-						<td>
-						${comment.text }
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-	</c:if>
+
+<c:if test="${commentList != null}">
+<!--  여기부터 -->
+<div class="ui comments" style="padding:60px;">
+ <h3 class="ui dividing header">Comments</h3>
+ 
+<c:forEach var="comment" items="${commentList}">
+  <div class="comment">
+    <a class="avatar">
+      <img src="/images/userFaces/tom.jpg">
+    </a>
+    <div class="content">
+      <a class="author"> ${comment.customerId}</a>
+      <div class="metadata">
+        <span class="date">${comment.regDate}</span>
+      </div>
+      <div class="text">
+        ${comment.text }
+      </div>
+      <div class="actions">
+        <a class="reply">Reply</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="comment">
+    <a class="avatar">
+      <img src="/images/userFaces/nan.jpg">
+    </a>
+    <div class="content">
+      <a class="author">Elliot Fu</a>
+      <div class="metadata">
+        <span class="date">Yesterday at 12:30AM</span>
+      </div>
+      <div class="text">
+        <p>This has been very useful for my research. Thanks as well!</p>
+      </div>
+      <div class="actions">
+        <a class="reply">Reply</a>
+      </div>
+    </div>
+ <!--  
+   <div class="comments">
+      <div class="comment">
+        <a class="avatar">
+          <img src="/images/avatar/small/jenny.jpg">
+        </a>
+        <div class="content">
+          <a class="author">Jenny Hess</a>
+          <div class="metadata">
+            <span class="date">Just now</span>
+          </div>
+          <div class="text">
+            Elliot you are always so right :)
+          </div>
+          <div class="actions">
+            <a class="reply">Reply</a>
+          </div>
+        </div>
+      </div>
+    </div> 
+  -->
+  </div>
+</c:forEach>
+
+  
+  <form class="ui reply form">
+    <div class="field">
+      <textarea  class="form-control" id="textm" name="text" placeholder="여기에 댓글을 입력해주세요"> </textarea>
+      	<input type="hidden" name="prodNo" value="${product.prodNo}">
+    </div>
+    <div class="ui blue labeled submit icon button">
+      <i class="icon edit"></i> 댓글달기
+    </div>
+  </form>
+  
+    </div> 
+   </c:if>
 
 
 </body>

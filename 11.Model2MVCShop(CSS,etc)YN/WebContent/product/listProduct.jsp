@@ -1,11 +1,9 @@
 <%@ page contentType="text/html; charset=euc-kr" %>
- 
-<!--  ///////////////////////// JSTL  ////////////////////////// -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 
 <html lang="ko">
-
+<%-- <%@include file= "/product/" %> --%>
 <head>
 	<meta charset="EUC-KR">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,13 +59,14 @@
 			});
 			
 			$("th:contains('가격') span:first").on("click", function(){
-				console.log($('input:hidden').val());
-				sorting = desc;
+				$("#sorting").val("desc");
+				alert("setting이 잘되엇나.. "+$("input:hidden[name='sorting']").val());
 				self.location ="/product/listProduct?menu=${param.menu }&sortBy=desc"
 			});
 			
 			$("th:contains('가격') span:last").on("click", function(){
-				sorting = asc;
+				$("input:hidden[name='sorting']").val("asc");
+				alert("setting이 잘되엇나.. "+$("input:hidden[name='sorting']").val());
 				self.location ="/product/listProduct?menu=${param.menu }&sortBy=asc";
 			});
 			
@@ -95,7 +94,7 @@
 			console.log("input hidden prodNo2 :  "+$("tr.ct_list_pop:contains('배송하기') span:first").find('input').val()  );
 
 			$("tr.ct_list_pop td:nth-child(2)").on("click", function(){
-				if( ${ sessionScope.user.role eq 'admin'} || !$( $(this).find('input')[0]).val() ) {
+			 	if(  ${ sessionScope.user.role eq 'admin'} || !$( $(this).find('input')[0]).val() ) {
 					self.location ="/product/getProduct?prodNo="+$( $(this).find('input')[1]).val() +"&menu=${param.menu}"
 					}
 			});
@@ -116,7 +115,7 @@
 							},
 							success : function(JSONData , status) {
 								
-								alert(prodNo);
+								alert(prodNo);+
 								//Debug...
 								alert(status);
 								//Debug...
@@ -202,19 +201,22 @@
 			var pageNo = 2;
 			var no = 10;
 		  	var scrollLocker = true;
-		  	var sorting = null;
+		  
+
 		    // 1. 스크롤 이벤트 발생
 		    $(window).scroll(function(){ // ① 스크롤 이벤트 최초 발생
-		         
+		    	
+		    	
 		        var currentScrollTop = $(window).scrollTop();
 				
 		        if( currentScrollTop - lastScrollTop > 0 ){
 		            if ($(document).height() <= $(window).scrollTop() + $(window).height() + 10 && scrollLocker) { //+10  
-		           		
+		            	//var sort = $("#sorting").val();
+		            	//alert(sort);
 		            	scrollLocker = false;
-		            	//self.location ="/product/listProduct?menu=${param.menu }&sortBy=desc"
+
 		                $.ajax({
-		                	url : "/product/json/listProduct/"+pageNo+"/"+sorting+"/",
+		                	url : "/product/json/listProduct/"+pageNo,
 							method : "GET" ,
 							dataType : "json" ,
 							headers : {
@@ -246,8 +248,9 @@
 			        						if( ${sessionScope.user.role=="admin"} ) {	//admin		        							
 				        							if(this.proTranCode=="1  "){
 		                            						str+="구매완료 &nbsp; "
-		                            							+						"<span id=deliver>배송하기</apan>"
-		        				                				+						"<input type='hidden' id='prodNo' name ='prodNo' value='"+this.prodNo+"'/>";
+		                            							+						"<span id=deliver>배송하기"
+		        				                				+						"<input type='hidden' id='prodNo' name ='prodNo' value='"+this.prodNo+"'/>"
+		        				                				+						"</span>";
 	                      					      }else if(this.proTranCode=="2  "){
 	                      	 				    		str+="배송중";
 	                      					      }else{
@@ -345,8 +348,9 @@
             <th style="text-align:center">No</th>
             <th style="text-align:center">상품명</th>
             <th style="text-align:center">가격&nbsp; <!-- td class="ct_list_b"  -->
-						<span>▼<input  type="hidden" name=""></span>
+						<span>▼</span>
 						<span>▲</span>
+						<input  type="hidden" id="sorting" name="sorting" value="">
 			</th>
             <th style="text-align:center">등록일</th>
             <th style="text-align:center">현재상태</th>
@@ -363,8 +367,9 @@
 			<tr class="ct_list_pop" data-bno="2">
 			  <td align="center">${ i }</td>
 			  <td align="left">	<a href="#" title="상품 설명 : ${product.prodDetail }">${product.prodName}</a> 
-					  	<input type="hidden" value="${product.proTranCode}"/>
+					  	<input type="hidden"  value="${product.proTranCode}"/>
 						<input type="hidden" value="${product.prodNo }"/>
+						
 			 </td>
 			  <td align="right">${product.priceAmount}원 &nbsp;&nbsp;</td>
 			  <td align="center">${product.manuDate}</td>

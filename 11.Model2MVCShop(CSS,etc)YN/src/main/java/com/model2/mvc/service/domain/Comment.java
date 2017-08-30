@@ -10,6 +10,7 @@ public class Comment {
 	private String customerName;
 	private String text;
 	private int prodNo;
+
 	
 
 	public Comment(){	
